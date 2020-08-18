@@ -100,54 +100,31 @@ var canvas = document.getElementById( 'canvas' );
         );
     } );
   }
-  const webcamElement = document.getElementById('video');
-  const webcam = new Webcam(webcamElement, 'environment');
-  webcam.start().then(result =>{
-      start(
-          container,
-          markers['alterra'],
-          video,
-          video.width,
-          video.height,
-          canvas,
-          function() {
-              // statsMain.update()
-          },
-          function() {
-              // statsWorker.update();
-          },
-          null
-      );
-   })
-   .catch(err => {
-      navigator.mediaDevices.enumerateDevices().then(devices => {
-        let sourceId = null;
-        // enumerate all devices
-        for (var device of devices) {
-          // if there is still no video input, or if this is the rear camera
-          if (device.kind == 'videoinput' &&
-              (!sourceId || device.label.indexOf('back') !== -1)) {
-            sourceId = device.deviceId;
-          }
-        }
-        // we didn't find any video input
-        if (!sourceId) {
-          throw 'no video input';
-        } else {
-          let constraints = {
-          video: {
-            deviceId: sourceId
-          },
-            audio: false
+  
+        var hint = {
+          audio: false,
+          video: true
+        };
+        var _isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+
+        if (_isMobile) {
+          hint = {
+            audio: false,
+            video: {
+                width: { ideal: 480 },
+                height: { ideal: 640 },
+                facingMode:
+                    { exact:
+                        "environment"
+                    }
+                },
           };
-          navigator.mediaDevices.getUserMedia( constraints ).then( function( stream ) {
-            handleStream(stream)
-          } ).catch(err => {
-            console.log('open camera error', err)
-          });
         }
-    })
-   });
+
+        navigator.mediaDevices.getUserMedia(hint).then(function(stream) {
+          handleStream(stream)
+        });
+  
 </script>
 </body>
 </html>
