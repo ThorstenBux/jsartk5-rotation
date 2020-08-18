@@ -102,7 +102,11 @@ var canvas = document.getElementById( 'canvas' );
   }
   const webcamElement = document.getElementById('video');
   var _isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
-console.log('navigator.userAgent', navigator.userAgent)
+  console.log('navigator.userAgent', navigator.userAgent)
+  if (navigator.userAgent.includes('Macintosh') && navigator.maxTouchPoints && navigator.maxTouchPoints > 2) {
+    // this is the iPad case
+    _isMobile = true;
+  }
   if (!_isMobile) {
           hint = {
             audio: false,
