@@ -102,36 +102,19 @@ var canvas = document.getElementById( 'canvas' );
   }
   const webcamElement = document.getElementById('video');
   var _isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
-
-  let facing = 'environment'
+console.log('navigator.userAgent', navigator.userAgent)
   if (!_isMobile) {
-    var hint = {
-          audio: false,
-          video: true
-        };
-        var _isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
-
-        if (_isMobile) {
           hint = {
             audio: false,
-            video: {
-                width: { ideal: 480 },
-                height: { ideal: 640 },
-                facingMode:
-                    { exact:
-                        "environment"
-                    }
-                },
+            video: true
           };
-        }
-
         navigator.mediaDevices.getUserMedia(hint).then(function(stream) {
           handleStream(stream)
         });
 
   } else {
 
-  const webcam = new Webcam(webcamElement, facing);
+  const webcam = new Webcam(webcamElement, 'environment');
   webcam.start().then(result =>{
       start(
           container,
