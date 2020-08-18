@@ -100,8 +100,12 @@ var canvas = document.getElementById( 'canvas' );
         );
     } );
   }
-  
-        var hint = {
+  const webcamElement = document.getElementById('video');
+  var _isMobile = navigator.userAgent.match(/(iPad)|(iPhone)|(iPod)|(android)|(webOS)/i)
+
+  let facing = 'environment'
+  if (!_isMobile) {
+    var hint = {
           audio: false,
           video: true
         };
@@ -124,7 +128,57 @@ var canvas = document.getElementById( 'canvas' );
         navigator.mediaDevices.getUserMedia(hint).then(function(stream) {
           handleStream(stream)
         });
-  
+
+  } else {
+
+  const webcam = new Webcam(webcamElement, facing);
+  webcam.start().then(result =>{
+      start(
+          container,
+          markers['alterra'],
+          video,
+          video.width,
+          video.height,
+          canvas,
+          function() {
+              // statsMain.update()
+          },
+          function() {
+              // statsWorker.update();
+          },
+          null
+      );
+   })
+   .catch(err => {
+      navigator.mediaDevices.enumerateDevices().then(devices => {
+        let sourceId = null;
+        // enumerate all devices
+        for (var device of devices) {
+          // if there is still no video input, or if this is the rear camera
+          if (device.kind == 'videoinput' &&
+              (!sourceId || device.label.indexOf('back') !== -1)) {
+            sourceId = device.deviceId;
+          }
+        }
+        // we didn't find any video input
+        if (!sourceId) {
+          throw 'no video input';
+        } else {
+          let constraints = {
+          video: {
+            deviceId: sourceId
+          },
+            audio: false
+          };
+          navigator.mediaDevices.getUserMedia( constraints ).then( function( stream ) {
+            handleStream(stream)
+          } ).catch(err => {
+            console.log('open camera error', err)
+          });
+        }
+    })
+   });
+  }
 </script>
 </body>
 </html>
